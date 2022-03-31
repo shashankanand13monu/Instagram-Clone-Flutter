@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:instagram_flutter/providers/user_provider.dart';
 import 'package:instagram_flutter/responsive/mobile_responsive.dart';
 import 'package:instagram_flutter/responsive/responsive_screen.dart';
@@ -14,14 +15,25 @@ import 'dart:ffi';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  //.env file
+  await dotenv.load(fileName: ".env");
+  String apikey = dotenv.env["FIREBASE_API_KEY"].toString();
+  String appId = dotenv.env["APP_ID"].toString();
+  String messagingSenderId = dotenv.env["MESSAGING_SENDER_ID"].toString();
+  String projectId = dotenv.env["PROJECT_ID"].toString();
+  String storageBucket = dotenv.env["STORAGE_BUCKET"].toString();
+  
+
+  print(apikey);
   if (kIsWeb) {
     await Firebase.initializeApp(
-      options: const FirebaseOptions(
-          apiKey: 'AIzaSyB7H4_AQs3h2eJXdNXsh623mUwESD9tCRU',
-          appId: '1:1041767658826:web:2db86f08f5557846687db3',
-          messagingSenderId: '1041767658826',
-          projectId: 'instagram-clone-ec0a3',
-          storageBucket: 'instagram-clone-ec0a3.appspot.com'),
+      options: FirebaseOptions(
+          apiKey: apikey,
+          appId: appId,
+          messagingSenderId: messagingSenderId,
+          projectId: projectId,
+          storageBucket: storageBucket),
     );
   } else {
     await Firebase.initializeApp();

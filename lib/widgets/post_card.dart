@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_flutter/utils/colors.dart';
 
+//post screen
 class PostCard extends StatelessWidget {
   const PostCard({Key? key}) : super(key: key);
 
@@ -10,7 +11,7 @@ class PostCard extends StatelessWidget {
       color: mobileBackgroundColor,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
-        children: [
+        children: [ 
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4)
                 .copyWith(right: 0),
