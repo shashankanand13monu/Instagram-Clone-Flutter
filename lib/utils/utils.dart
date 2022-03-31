@@ -14,5 +14,10 @@ pickImage(ImageSource source) async {
 showSnackBar(String content, BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(content),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(14),
+    ),
+    behavior: SnackBarBehavior.floating,
+    elevation: 12,
   ));
 }
