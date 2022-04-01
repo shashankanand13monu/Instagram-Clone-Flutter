@@ -1,17 +1,60 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_flutter/providers/user_provider.dart';
 import 'package:instagram_flutter/utils/colors.dart';
+import 'package:instagram_flutter/utils/utils.dart';
+import 'package:instagram_flutter/widgets/like_animation.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../models/user.dart';
+import '../resources/firestore_method.dart';
+import '../screens/comment_screen.dart';
 
 //post screen
-class PostCard extends StatelessWidget {
-  const PostCard({Key? key}) : super(key: key);
+class PostCard extends StatefulWidget {
+  final snap;
+  const PostCard({Key? key, required this.snap}) : super(key: key);
+
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  bool isLiked = false;
+  int comentLen = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getComments();
+  }
+
+  void getComments() async {
+    // var = QuerySnapshot type
+    try {
+      var snap = await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.snap['postId'])
+          .collection('comments')
+          .get();
+      setState(() {
+        comentLen = snap.docs.length;
+      });
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final User user = Provider.of<UserProvider>(context).getUser;
     return Container(
       color: mobileBackgroundColor,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
-        children: [ 
+        children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4)
                 .copyWith(right: 0),
@@ -19,32 +62,37 @@ class PostCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundImage: NetworkImage(
-                      'https://learnenglish.britishcouncil.org/sites/podcasts/files/2021-10/RS6715_492969113-hig.jpg'),
+                  backgroundImage: NetworkImage(widget.snap['profImage']),
                 ),
                 Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "  username ",
-                            ),
-                            WidgetSpan(
-                              child: Icon(
-                                Icons.verified_rounded,
-                                size: 14,
-                                color: Colors.blue,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: widget.snap['username'],
                               ),
-                            ),
-                          ],
+                              WidgetSpan(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 5.0),
+                                  child: Icon(
+                                    Icons.verified_rounded,
+                                    size: 14,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Text('  caption'),
-                    ],
+                        Text('  caption'),
+                      ],
+                    ),
                   ),
                 ),
                 IconButton(
@@ -69,8 +117,11 @@ class PostCard extends StatelessWidget {
                                 ),
                                 ListTile(
                                   title: Center(child: Text('Delete')),
-                                  onTap: () {
-                                    Navigator.pop(context);
+                                  onTap: () async {
+                                    FirestoreMethods()
+                                        .deletePost(widget.snap['postId']);
+                                    showSnackBar('Post Deleted !', context);
+                                    Navigator.of(context).pop();
                                   },
                                 ),
                                 Divider(
@@ -97,47 +148,90 @@ class PostCard extends StatelessWidget {
             ),
           ),
           //Image Header
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.35,
-            width: double.infinity,
-            child: Image.network(
-                'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80',
-                fit: BoxFit.cover),
+          GestureDetector(
+            onDoubleTap: () async {
+              await FirestoreMethods().likePost(
+                  widget.snap['postId'], user.uid, widget.snap['likes']);
+              setState(() {
+                isLiked = true;
+              });
+            },
+            child: Stack(
+              alignment: Alignment(-0.35, -0.35),
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  width: double.infinity,
+                  child:
+                      Image.network(widget.snap['postUrl'], fit: BoxFit.cover),
+                ),
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: isLiked ? 1 : 0,
+                  child: LikeAnimation(
+                    child: IconButton(
+                      // alignment: Alignment.bottomCenter ,
+                      onPressed: () async {
+                        await FirestoreMethods().likePost(widget.snap['postId'],
+                            user.uid, widget.snap['likes']);
+                      },
+                      icon: Icon(
+                        Icons.favorite_rounded,
+                        color: Colors.white,
+                        size: 150,
+                      ),
+                    ),
+                    isAnimating: isLiked,
+                    duration: const Duration(
+                      milliseconds: 300,
+                    ),
+                    onEnd: () {
+                      setState(() {
+                        isLiked = false;
+                      });
+                    },
+                  ),
+                )
+              ],
+            ),
           ),
           //Like and Comment
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             child: Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.favorite_border_rounded,
-                        color: Colors.red,
+                LikeAnimation(
+                  isAnimating: widget.snap['likes'].contains(user.uid),
+                  smallLike: true,
+                  child: IconButton(
+                    onPressed: () async {
+                      await FirestoreMethods().likePost(widget.snap['postId'],
+                          user.uid, widget.snap['likes']);
+                    },
+                    icon: widget.snap['likes'].contains(user.uid)
+                        ? Icon(
+                            Icons.favorite_rounded,
+                            color: Colors.red,
+                          )
+                        : Icon(
+                            Icons.favorite_border_rounded,
+                          ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.insert_comment),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CommentScreen(
+                        snap: widget.snap,
                       ),
-                      onPressed: () {},
                     ),
-                    Text('0'),
-                  ],
+                  ),
                 ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.insert_comment),
-                      onPressed: () {},
-                    ),
-                    Text('0'),
-                  ],
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.send),
-                      onPressed: () {},
-                    ),
-                  ],
+                Text('0'),
+                IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: () {},
                 ),
                 Expanded(
                     child: Align(
@@ -155,22 +249,21 @@ class PostCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('1,23 Likes',
+                Text(widget.snap['likes'].length.toString() + ' likes',
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.only(top: 16),
                   child: RichText(
                     text: TextSpan(
-                      text: 'username',
+                      text: widget.snap['username'],
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                       children: [
                         TextSpan(
-                          text:
-                              '  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.',
+                          text: '  ' + widget.snap['description'].toString(),
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.normal,
@@ -184,7 +277,7 @@ class PostCard extends StatelessWidget {
                   onTap: () => print('Comment'),
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Text('View all 466 comments',
+                    child: Text('View all ' + comentLen.toString() + ' comments',
                         style: TextStyle(
                           color: Colors.grey,
                           fontWeight: FontWeight.bold,
@@ -194,7 +287,10 @@ class PostCard extends StatelessWidget {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text('1 day ago',
+                  child: Text(
+                      DateFormat.yMMMd().format(
+                        widget.snap['datePublished'].toDate(),
+                      ),
                       style: TextStyle(
                         color: Colors.grey,
                         fontWeight: FontWeight.bold,

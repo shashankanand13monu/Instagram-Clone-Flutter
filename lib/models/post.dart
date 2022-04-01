@@ -37,14 +37,14 @@ class Post {
   static Post fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
     return Post(
-      description: snapshot['description'] as String,
+      description: snapshot['description'] ,
       uid: snapshot['uid'] as String,
-      username: snapshot['username'] as String,
-      postId: snapshot['postId'] as String,
-      datePublished: snapshot['datePublished'] as String,
+      username: snapshot['username'] ,
+      postId: snapshot['postId'] ,
+      datePublished: snapshot['datePublished'] ,
       postUrl: snapshot['postUrl'] as String,
-      profImage: snapshot['profImage'] as String,
-      likes: snapshot['likes'] as String,
+      profImage: snapshot['profImage'] ,
+      likes: snapshot['likes'] ,
     
     );
   }
