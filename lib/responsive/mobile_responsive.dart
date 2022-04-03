@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:instagram_flutter/responsive/global_variables.dart';
 import 'package:instagram_flutter/screens/add_screen.dart';
 import 'package:instagram_flutter/screens/feed_screen.dart';
@@ -45,12 +46,13 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
+  
     model.User user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
       body: PageView(
         children: homeScreenItems, //Global Variable
         controller: pageController,
-        // physics: NeverScrollableScrollPhysics(),
+        physics: NeverScrollableScrollPhysics(),
         onPageChanged: (page) {
           setState(() {
             _page = page;

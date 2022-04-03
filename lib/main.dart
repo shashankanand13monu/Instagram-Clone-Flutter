@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:instagram_flutter/providers/user_provider.dart';
 import 'package:instagram_flutter/responsive/mobile_responsive.dart';
@@ -15,6 +16,7 @@ import 'dart:ffi';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
 
   //.env file
   await dotenv.load(fileName: ".env");
@@ -48,6 +50,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+  //   SystemChrome.setEnabledSystemUIMode(
+  //   SystemUiMode.manual,
+  //   overlays: [SystemUiOverlay.top],
+
+  
+  // );
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
