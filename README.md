@@ -1,5 +1,5 @@
 # instagram_flutter
-
+<img src="https://github.com/shashankanand13monu/Instagram-Clone-Flutter/blob/master/flutter_demo_insta.png">
 A new Flutter project.
 
 ## Getting Started
