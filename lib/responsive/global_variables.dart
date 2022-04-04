@@ -12,7 +12,7 @@ List<Widget> homeScreenItems = [
   FeedScreen(),
   SearchScreen(),
   AddPostScreen(),
-  Text('Activity'),
+  Center(child: Text('Not Implented')),
   ProfileScreen(
     uid: FirebaseAuth.instance.currentUser!.uid ,
     ),

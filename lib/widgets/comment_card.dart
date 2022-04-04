@@ -38,7 +38,7 @@ class _CommentCardState extends State<CommentCard> {
                         TextSpan(
                             text: widget.snap['name'] + ' ',
                             style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
+                                const TextStyle(fontWeight: FontWeight.bold,color: Colors.white)),
                         WidgetSpan(
                             child: const Icon(
                           Icons.verified_rounded,
@@ -47,6 +47,7 @@ class _CommentCardState extends State<CommentCard> {
                         )),
                         TextSpan(
                           text: ' ' + widget.snap['text'],
+                          style: const TextStyle(fontSize: 16,color: Colors.white),
                         ),
                       ],
                     ),

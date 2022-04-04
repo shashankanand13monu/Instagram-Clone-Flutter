@@ -1,7 +1,8 @@
-import 'dart:ffi';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:instagram_flutter/responsive/global_variables.dart';
 import 'package:instagram_flutter/screens/home_screen.dart';
 import 'package:instagram_flutter/screens/sign_up.dart';
 import 'package:instagram_flutter/utils/colors.dart';
@@ -34,9 +35,54 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void loginUser() async {
+    
     setState(() {
       _isLoading = true;
     });
+
+    if(_emailController.text.isEmpty)
+    {
+      setState(() {
+        _isLoading = false;
+      
+      });
+       return showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text("Error"),
+                  content: Text("Please enter your email"),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                      },
+                      child: Text("okay"),
+                    ),
+                  ],
+                ),
+              );
+    }
+    else if(_passwordController.text.isEmpty)
+    {
+        setState(() {
+        _isLoading = false;
+        });
+         return showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text("Error"),
+                  content: Text("Please enter your password"),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                      },
+                      child: Text("okay"),
+                    ),
+                  ],
+                ),
+              );
+    }
     String res = await AuthMethods().signInUser(
       email: _emailController.text,
       password: _passwordController.text,
@@ -64,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: MediaQuery.of(context).size.width > webScreenSize?  EdgeInsets.symmetric(horizontal:  MediaQuery.of(context).size.width/3 ): EdgeInsets.symmetric(horizontal: 20),
             width: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -99,11 +145,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   isPass: true,
                 ),
 
-                ElevatedButton(
-                  onPressed: loginUser,
-                  child: Text('Login'),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.blueAccent,
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: ElevatedButton(
+                    onPressed:  loginUser,
+                    child: Text('Login'),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.blueAccent,
+                    ),
                   ),
                 ),
 

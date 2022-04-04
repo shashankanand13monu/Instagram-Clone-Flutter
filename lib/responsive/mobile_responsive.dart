@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:instagram_flutter/models/user.dart';
 import 'package:instagram_flutter/responsive/global_variables.dart';
 import 'package:instagram_flutter/screens/add_screen.dart';
 import 'package:instagram_flutter/screens/feed_screen.dart';
@@ -46,60 +47,67 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
-  
-    model.User user = Provider.of<UserProvider>(context).getUser;
-    return Scaffold(
-      body: PageView(
-        children: homeScreenItems, //Global Variable
-        controller: pageController,
-        physics: NeverScrollableScrollPhysics(),
-        onPageChanged: (page) {
-          setState(() {
-            _page = page;
-          });
-        },
-      ),
-      bottomNavigationBar: CupertinoTabBar(
-        backgroundColor: mobileBackgroundColor,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: _page == 0 ? Colors.white : secondaryColor,
+    User? user = Provider.of<UserProvider>(context).getUser;
+    if (user == null) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    } else {
+      return Scaffold(
+        body: PageView(
+          children: homeScreenItems, //Global Variable
+          controller: pageController,
+          physics: NeverScrollableScrollPhysics(),
+          onPageChanged: (page) {
+            setState(() {
+              _page = page;
+            });
+          },
+        ),
+        bottomNavigationBar: CupertinoTabBar(
+          backgroundColor: mobileBackgroundColor,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+                color: _page == 0 ? Colors.white : secondaryColor,
+              ),
+              label: '',
             ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.search,
-              color: _page == 1 ? Colors.white : secondaryColor,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.search,
+                color: _page == 1 ? Colors.white : secondaryColor,
+              ),
+              label: '',
             ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.add_box,
-              color: _page == 2 ? Colors.white : secondaryColor,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.add_box,
+                color: _page == 2 ? Colors.white : secondaryColor,
+              ),
+              label: '',
             ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.favorite,
-              color: _page == 3 ? Colors.white : secondaryColor,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.favorite,
+                color: _page == 3 ? Colors.white : secondaryColor,
+              ),
+              label: '',
             ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-              color: _page == 4 ? Colors.white : secondaryColor,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.person,
+                color: _page == 4 ? Colors.white : secondaryColor,
+              ),
+              label: '',
             ),
-            label: '',
-          ),
-        ],
-        onTap: navigationTap,
-      ),
-    );
+          ],
+          onTap: navigationTap,
+        ),
+      );
+    }
   }
 }

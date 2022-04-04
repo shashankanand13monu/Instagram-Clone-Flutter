@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_flutter/providers/user_provider.dart';
+import 'package:instagram_flutter/responsive/global_variables.dart';
 import 'package:instagram_flutter/utils/colors.dart';
 import 'package:instagram_flutter/utils/utils.dart';
 import 'package:instagram_flutter/widgets/like_animation.dart';
@@ -49,9 +50,12 @@ class _PostCardState extends State<PostCard> {
 
   @override
   Widget build(BuildContext context) {
+  final width = MediaQuery.of(context).size.width;
+
     final User user = Provider.of<UserProvider>(context).getUser;
     return Container(
-      color: mobileBackgroundColor,
+      color: width>webScreenSize?mobileBackgroundColor : mobileBackgroundColor,
+      
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         children: [
@@ -76,6 +80,10 @@ class _PostCardState extends State<PostCard> {
                             children: [
                               TextSpan(
                                 text: widget.snap['username'],
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               WidgetSpan(
                                 child: Padding(
@@ -274,7 +282,13 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => print('Comment'),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CommentScreen(
+                        snap: widget.snap,
+                      ),
+                    ),
+                  ),
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text('View all ' + comentLen.toString() + ' comments',

@@ -12,11 +12,9 @@ import 'package:instagram_flutter/screens/login_screen.dart';
 import 'package:instagram_flutter/screens/sign_up.dart';
 import 'package:instagram_flutter/utils/colors.dart';
 import 'package:provider/provider.dart';
-import 'dart:ffi';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
 
   //.env file
   await dotenv.load(fileName: ".env");
@@ -25,7 +23,6 @@ void main() async {
   String messagingSenderId = dotenv.env["MESSAGING_SENDER_ID"].toString();
   String projectId = dotenv.env["PROJECT_ID"].toString();
   String storageBucket = dotenv.env["STORAGE_BUCKET"].toString();
-  
 
   print(apikey);
   if (kIsWeb) {
@@ -50,12 +47,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-  //   SystemChrome.setEnabledSystemUIMode(
-  //   SystemUiMode.manual,
-  //   overlays: [SystemUiOverlay.top],
+    //   SystemChrome.setEnabledSystemUIMode(
+    //   SystemUiMode.manual,
+    //   overlays: [SystemUiOverlay.top],
 
-  
-  // );
+    // );
+    
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
@@ -64,6 +62,7 @@ class MyApp extends StatelessWidget {
         // ChangeNotifierProvider(create: (_) => AuthMethods()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData.dark().copyWith(
           scaffoldBackgroundColor: mobileBackgroundColor,

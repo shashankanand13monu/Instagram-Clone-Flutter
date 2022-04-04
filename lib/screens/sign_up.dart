@@ -10,6 +10,7 @@ import 'package:instagram_flutter/responsive/webscreen_layout.dart';
 import 'package:instagram_flutter/utils/colors.dart';
 import 'package:instagram_flutter/widgets/text_field.dart';
 
+import '../responsive/global_variables.dart';
 import '../utils/utils.dart';
 import 'login_screen.dart';
 
@@ -52,6 +53,68 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() {
       _isLoading = true;
     });
+    if (_bioController.text.isEmpty) {
+      setState(() {
+        _isLoading = false;
+      });
+      return showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text("All Fields Required"),
+          content: Text("Enter your bio to continue"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: Text("okay"),
+            ),
+          ],
+        ),
+      );
+    } else if (_image == null) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      return showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text("All Fields Required"),
+          content: Text("Upload a profile picture to continue"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: Text("okay"),
+            ),
+          ],
+        ),
+      );
+    }
+    else if(_passwordController.text.isEmpty || _passwordController.text.length<6){
+      setState(() {
+        _isLoading = false;
+      
+      });
+       return showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text("Enter a valid password"),
+                  content: Text("A password must be at least 6 characters long"),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                      },
+                      child: Text("okay"),
+                    ),
+                  ],
+                ),
+              );
+
+    }
     print('email: ${_emailController.text}');
     print('password: ${_passwordController.text}');
     String res = await AuthMethods().signUpUser(
@@ -85,6 +148,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
+            padding: MediaQuery.of(context).size.width > webScreenSize
+                ? EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width / 3)
+                : EdgeInsets.symmetric(horizontal: 20),
             // padding: EdgeInsets.symmetric(horizontal: 20),
             // width: double.infinity,
             child: Column(
@@ -143,6 +210,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
                 const SizedBox(height: 20),
+
                 TextFieldInput(
                   hintText: 'Enter your username',
                   textInputType: TextInputType.text,
@@ -166,7 +234,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 20),
 
                 TextFieldInput(
-                  hintText: 'Enter your Bio',
+                  hintText: '* Enter your Bio (Required)',
                   textInputType: TextInputType.text,
                   textEditingcontroller: _bioController,
                 ),
