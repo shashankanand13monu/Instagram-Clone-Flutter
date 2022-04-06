@@ -1,4 +1,5 @@
 # instagram_flutter
+[![Streamlit Cloud](https://img.shields.io/badge/Firebase-Demo-red?style=for-the-badge&)](https://instagram-clone-ec0a3.web.app/)
 <img src="https://github.com/shashankanand13monu/Instagram-Clone-Flutter/blob/master/flutter_demo_insta.png">
 A new Flutter project.
 
